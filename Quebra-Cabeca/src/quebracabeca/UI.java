@@ -6,119 +6,103 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+
+
 /**
- *Classe responsável pela interface gráfica, herda características da javax.swing.JFrame
- *instancia o objeto jogo
+ *Object responsible for the UI
+ *Instantiates the Game Object
  */
-public class IGrafica extends javax.swing.JFrame{
-    JButton mat[][]= new JButton[4][4];
-    //Tabuleiro QCTab = new Tabuleiro();
-    Jogo jogo = new Jogo();
+public class UI extends javax.swing.JFrame{
+    
+    JButton buttons[][]= new JButton[4][4];
+    Game game = new Game();
     
     //Panel to show the Puzzle Answer
     javax.swing.JLabel lblAnswer;
     
-    /**
-     *Construtor para preenchimento da interface gráfica.
-     */
-    public IGrafica() {
+    public UI() {
         initComponents();
 
-        mat[0][0]=jButton1;
-        mat[0][1]=jButton2;
-        mat[0][2]=jButton3;
-        mat[0][3]=jButton4;
-        mat[1][0]=jButton5;
-        mat[1][1]=jButton6;
-        mat[1][2]=jButton7;
-        mat[1][3]=jButton8;
-        mat[2][0]=jButton9;
-        mat[2][1]=jButton10;
-        mat[2][2]=jButton11;
-        mat[2][3]=jButton12;
-        mat[3][0]=jButton13;
-        mat[3][1]=jButton14;
-        mat[3][2]=jButton15;
-        mat[3][3]=jButton16;
+        buttons[0][0]=jButton1;
+        buttons[0][1]=jButton2;
+        buttons[0][2]=jButton3;
+        buttons[0][3]=jButton4;
+        buttons[1][0]=jButton5;
+        buttons[1][1]=jButton6;
+        buttons[1][2]=jButton7;
+        buttons[1][3]=jButton8;
+        buttons[2][0]=jButton9;
+        buttons[2][1]=jButton10;
+        buttons[2][2]=jButton11;
+        buttons[2][3]=jButton12;
+        buttons[3][0]=jButton13;
+        buttons[3][1]=jButton14;
+        buttons[3][2]=jButton15;
+        buttons[3][3]=jButton16;
         
-        jTextArea1.setText(jogo.getRanking());
+        jTextArea1.setText(game.getRanking());
     }
+    
     /**
-     * 
+     *Load images on the board.
      */
-    /**
-     *Método que preenche o tabuleiro.
-     */
-    private void carregaImagens(){
-        int valor;
+    private void loadImages(){
+        int value;
         for(int i = 0; i<=3; i++){
             for(int j = 0; j<=3;j++){
-                valor = jogo.getValorReal(jogo.getPoscaoN(i,j));
+                value = game.getRealValue(game.getPositionN(i,j));
                 
-                mat[i][j].setText("");
+                buttons[i][j].setText("");
                 
-                Icon icone = new ImageIcon(jogo.getPastaImg() + valor + ".jpg");
-                System.out.println(jogo.getPastaImg() + valor + ".jpg");
-                mat[i][j].setIcon(icone);
+                Icon icone = new ImageIcon(game.getImgFolder() + value + ".jpg");
+                buttons[i][j].setIcon(icone);
             }
         }
         
         lblAnswer = new javax.swing.JLabel();
         jPanel1.add(lblAnswer, 0);
         lblAnswer.setBounds(10, 10, 240, 240);
-        Icon icone = new ImageIcon(jogo.getPastaImg() + "Resultado.jpg");
-        lblAnswer.setIcon(icone);
+        lblAnswer.setIcon(new ImageIcon(game.getImgFolder() + "Resultado.jpg"));
         lblAnswer.setVisible(false);
     }
+    
     /**
-     *Método para salvar o jogo.
-     *@Throws salvaJogo  Ao salvar o jogo pode haver uma exceção.
+     *Method to save the game in a disk.
+     *@Throws saveGame, one exception can happen during the saving process.
      */
-    private void salvaJogo(){
-    //Salva Jogo em disco
-        System.out.println("Entrou no salvamento");
-        
+    private void saveGame(){        
         JFileChooser fc = new JFileChooser();
         int returnVal = fc.showSaveDialog(this);
         System.out.println(returnVal);
-        if(returnVal==0){
-            System.out.println(fc.getSelectedFile().getAbsolutePath());
-            
+        if(returnVal==0){           
             try {       
-                File arquivo = fc.getSelectedFile();  //= new File("c:\\GuardaObjetos.txt");
-                FileOutputStream fOut = new FileOutputStream(arquivo);
+                File file = fc.getSelectedFile();
+                FileOutputStream fOut = new FileOutputStream(file);
                 ObjectOutputStream objOut = new ObjectOutputStream(fOut);
-                objOut.writeObject(jogo);
-                System.out.println("Salvou");
+                objOut.writeObject(game);
             } catch (Exception e) {
-                System.out.println("Erro na Gravação :" + e.getMessage());
+                System.out.println("Error saving the game :" + e.getMessage());
                 System.out.println(e.getCause());
             } 
         }
     }
+    
     /**
-     *Método para recuperar o jogo que foi gravado previamente em disco.
-     *@return Retorna  verdadeiro se 
+     *Méthod to load the game saved on disk.
+     *@return true if the game is properly loaded
      *@throws
      */            
-    private boolean recuperaJogo(){
-    //Recupera QCTab gravada previamente em disco
-        System.out.println("Entrou na Recuperação");
-
+    private boolean loadGame(){
         JFileChooser fc = new JFileChooser();
         int returnVal = fc.showOpenDialog(this);
-        System.out.println(returnVal);
         if(returnVal==0){
-            System.out.println(fc.getSelectedFile().getAbsolutePath());
-
             try {
-                File arquivo = fc.getSelectedFile();
-                FileInputStream fIn = new FileInputStream(arquivo);
+                File file = fc.getSelectedFile();
+                FileInputStream fIn = new FileInputStream(file);
                 ObjectInputStream objIn = new ObjectInputStream(fIn);
-                jogo=(Jogo)objIn.readObject();
-                System.out.println("Recuperou");
+                game=(Game)objIn.readObject();
             } catch (Exception e) {
-                System.out.println("Erro na Leitura :" + e.getMessage());
+                System.out.println("Error loading file :" + e.getMessage());
                 System.out.println(e.getCause());
             }
             return true;
@@ -171,7 +155,7 @@ public class IGrafica extends javax.swing.JFrame{
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel12.setText("QUEBRA CABEÇA DE MÃO");
         getContentPane().add(jLabel12);
-        jLabel12.setBounds(0, 0, 600, 20);
+        jLabel12.setBounds(0, 0, 590, 20);
 
         jButton36.setText("Limpar Ranking");
         jButton36.addActionListener(new java.awt.event.ActionListener() {
@@ -472,7 +456,7 @@ public class IGrafica extends javax.swing.JFrame{
             }
         });
         getContentPane().add(jButton35);
-        jButton35.setBounds(180, 400, 100, 23);
+        jButton35.setBounds(180, 390, 100, 23);
 
         jButton21.setText("Salvar");
         jButton21.addActionListener(new java.awt.event.ActionListener() {
@@ -481,7 +465,7 @@ public class IGrafica extends javax.swing.JFrame{
             }
         });
         getContentPane().add(jButton21);
-        jButton21.setBounds(280, 400, 110, 23);
+        jButton21.setBounds(280, 390, 110, 23);
 
         jButton32.setText("Abrir Jogo");
         jButton32.addActionListener(new java.awt.event.ActionListener() {
@@ -492,17 +476,17 @@ public class IGrafica extends javax.swing.JFrame{
         getContentPane().add(jButton32);
         jButton32.setBounds(200, 50, 110, 23);
 
-        setSize(new java.awt.Dimension(608, 454));
+        setSize(new java.awt.Dimension(608, 457));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
-        salvaJogo();
+        saveGame();
     }//GEN-LAST:event_jButton21ActionPerformed
 
     private void jButton36ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton36ActionPerformed
-        jogo.limpaRanking();
-        jTextArea1.setText(jogo.getRanking());
+        game.cleanRanking();
+        jTextArea1.setText(game.getRanking());
     }//GEN-LAST:event_jButton36ActionPerformed
 
     private void jButton35ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton35ActionPerformed
@@ -510,61 +494,56 @@ public class IGrafica extends javax.swing.JFrame{
     }//GEN-LAST:event_jButton35ActionPerformed
 
     private void jButton31ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton31ActionPerformed
-        jogo.iniciaJogo();
+        game.startGame();
         selectImage();
-        carregaImagens();
+        loadImages();
     }//GEN-LAST:event_jButton31ActionPerformed
 
     private void selectImage()
     {
-       String pasta = new String();
+       String folder = new String();
         
         File path = new File(".");
 
         try {
-            pasta = path.getCanonicalPath() + "\\Imagens\\";
+            folder = path.getCanonicalPath() + "\\Imagens\\";
         } catch(Exception e) {
         }
-        pasta = pasta + "Numeros";
-        pasta = pasta + "\\";
+        folder = folder + "Numeros";
+        folder = folder + "\\";
         
-        jogo.setPastaImg(pasta);
+        game.setImgFolder(folder);
     }
     
     private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
-        jogo.settipoEmbaralhamento(2);
-        //jogo.embaralha(2);
-        //carregaMatriz();
+        game.setShuffleTipe(2);
     }//GEN-LAST:event_jButton18ActionPerformed
 
     private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
-        jogo.settipoEmbaralhamento(1);
-        //jogo.embaralha(1);
-        //carregaMatriz();        
+        game.setShuffleTipe(1);
     }//GEN-LAST:event_jButton20ActionPerformed
 
     private void jButtonPieceActionPerformed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonPieceActionPerformed
         for (int i = 0; i <= 3; i++) {
             for (int j = 0; j <= 3; j++) {
-                if (evt.getSource() == mat[i][j]) {
-                    int valPara, colPara, linPara;
+                if (evt.getSource() == buttons[i][j]) {
+                    int valueTo, colTo, linTo;
 
-                    valPara = jogo.getMovePeca(jogo.getPoscaoN(i, j));
-
+                    valueTo = game.getMovePice(game.getPositionN(i, j));
                     
-                    System.out.println("valPara = " + valPara);
+                    System.out.println("value TO = " + valueTo);
 
-                    if (valPara == -1) {
-                        //A peça não pode ser movida!
-                    } else if (valPara == -2) {
-                        //Vencedor!
+                    if (valueTo == -1) {
+                        //Piece could not be moved!
+                    } else if (valueTo == -2) {
+                        //Winner!
                     } else {
-                        colPara = jogo.getCol(valPara);
-                        linPara = jogo.getLin(valPara);
+                        colTo = game.getCol(valueTo);
+                        linTo = game.getLine(valueTo);
 
-                        Icon icone = mat[linPara][colPara].getIcon();
-                        mat[linPara][colPara].setIcon(mat[i][j].getIcon());
-                        mat[i][j].setIcon(icone);
+                        Icon icone = buttons[linTo][colTo].getIcon();
+                        buttons[linTo][colTo].setIcon(buttons[i][j].getIcon());
+                        buttons[i][j].setIcon(icone);
                     }
                 }
             }
@@ -583,8 +562,8 @@ public class IGrafica extends javax.swing.JFrame{
     }//GEN-LAST:event_jCheckBox1MouseReleased
 
     private void jButton32ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton32ActionPerformed
-        recuperaJogo();
-        carregaImagens();
+        loadGame();
+        loadImages();
     }//GEN-LAST:event_jButton32ActionPerformed
                                                                                     
     /**
@@ -593,7 +572,7 @@ public class IGrafica extends javax.swing.JFrame{
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new IGrafica().setVisible(true);
+                new UI().setVisible(true);
             }
         });
     }
