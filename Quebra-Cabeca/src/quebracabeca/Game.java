@@ -13,8 +13,8 @@ import javax.swing.JOptionPane;
  *Implements Serializable to sava the game in the disk
  */
 public class Game implements Serializable{
-    private Tabuleiro board = new Tabuleiro();
-    private Informacoes info;
+    private Board board = new Board();
+    private Ranking info;
     private int shuffleTipe = 0;
     String imgFolder = new String();
     
@@ -26,8 +26,8 @@ public class Game implements Serializable{
     *Method to sstart the game
     */
     public void startGame(){
-        board = new Tabuleiro();
-        board.embaralha(shuffleTipe);
+        board = new Board();
+        board.shuffle(shuffleTipe);
     }
     
     /**
@@ -75,10 +75,10 @@ public class Game implements Serializable{
             File file = new File(url + "GuardaInfo.txt");
             FileInputStream fIn = new FileInputStream(file);
             ObjectInputStream objIn = new ObjectInputStream(fIn);
-            info = (Informacoes)objIn.readObject();
+            info = (Ranking)objIn.readObject();
             System.out.println("Recuperou");
         } catch (Exception e) {
-            info = new Informacoes();
+            info = new Ranking();
             System.out.println("Error loading file :" + e.getMessage());
             System.out.println(e.getCause());
         }    
@@ -91,7 +91,7 @@ public class Game implements Serializable{
      *@param tipe receives the shuffle one for odd and two for even
      */
     public void shuffle(int tipe){
-        board.embaralha(tipe);
+        board.shuffle(tipe);
     }
     
     /**
@@ -106,7 +106,7 @@ public class Game implements Serializable{
 
         if(movePice>=0){
             if(getWinner()){
-                JOptionPane.showMessageDialog(null, "Congratulations you are the winner! \n Time = " + board.getTempo() + "\n Points = " + board.getPontuacao(), "Congratulations", 1);
+                JOptionPane.showMessageDialog(null, "Congratulations you are the winner! \n" + "\n Points = " + board.getPunctuation(), "Congratulations", 1);
             }else{
                 //
             }
@@ -120,22 +120,18 @@ public class Game implements Serializable{
      */
     public boolean getWinner(){
         boolean win;
-        win = board.getVencedor();
+        win = board.getWinner();
 
         if(win==true){
-            info.addRanking(getPoints(), getTime());
+            info.addRanking(getPoints());
             saveInfo();
             return  true;
         }
         return false;
     }
 
-    public int getTime(){        
-        return board.getTempo();
-    }
-
     public double getPoints(){
-        return board.getPontuacao();
+        return board.getPunctuation();
     }
     
     //Returns the column from piece n
@@ -145,21 +141,21 @@ public class Game implements Serializable{
     
     //Returns the line from piece n
     public int getLine(int n){
-        return board.getLin(n);
+        return board.getRow(n);
     }
     
     //Returns the value from the piece n
     public int getRealValue(int n){
-        return board.getValorReal(n);
+        return board.getRealValue(n);
     }
     
     //Returns the position N of a piece in the line lin and column col
     public int getPositionN(int lin, int col){
-        return board.getPoscaoN(lin, col);
+        return board.getPositionN(lin, col);
     }
     
     public void cleanRanking(){
-        info.limpaRanking();
+        info.clearRanking();
         saveInfo();
     }
     
